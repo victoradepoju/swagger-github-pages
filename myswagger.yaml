@@ -1,0 +1,194 @@
+openapi: 3.0.1
+info:
+  title: Organisation API
+  description: "API for creating organisations, including authentication, validation, and error handling."
+  version: 1.0.0
+servers:
+- url: https://virtserver.swaggerhub.com/VICTORADEPOJU30_1/create-organisation-endpoint/1.0.0
+  description: SwaggerHub API Auto Mocking
+security:
+- BearerAuth: []
+paths:
+  /api/v1/organisations:
+    post:
+      tags:
+      - Organisation Creation
+      summary: Create a new organisation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrganisationRequest'
+        required: true
+      responses:
+        "201":
+          description: Organisation created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateOrganisationResponse'
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        "401":
+          description: User not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthenticatedErrorResponse'
+        "422":
+          description: Unprocessable entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+      security:
+      - BearerAuth: []
+components:
+  schemas:
+    CreateOrganisationRequest:
+      required:
+      - address
+      - country
+      - description
+      - email
+      - industry
+      - name
+      - state
+      - type
+      type: object
+      properties:
+        name:
+          type: string
+          example: OrgName
+        description:
+          type: string
+          example: This is an organisation.
+        email:
+          type: string
+          format: email
+          example: org@example.com
+        industry:
+          type: string
+          example: Technology
+        type:
+          type: string
+          example: Private
+        country:
+          type: string
+          example: USA
+        address:
+          type: string
+          example: 123 Main St
+        state:
+          type: string
+          example: CA
+    CreateOrganisationResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+        message:
+          type: string
+          example: organisation created successfully
+        data:
+          $ref: '#/components/schemas/Organisation'
+        status_code:
+          type: integer
+          example: 201
+    Organisation:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        name:
+          type: string
+          example: OrgName
+        description:
+          type: string
+          example: This is an organisation.
+        owner_id:
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        slug:
+          type: string
+          example: orgname
+        email:
+          type: string
+          format: email
+          example: org@example.com
+        industry:
+          type: string
+          example: Technology
+        type:
+          type: string
+          example: Private
+        country:
+          type: string
+          example: USA
+        address:
+          type: string
+          example: 123 Main St
+        state:
+          type: string
+          example: CA
+        created_at:
+          type: string
+          format: date-time
+          example: 2024-01-01T12:00:00Z
+        updated_at:
+          type: string
+          format: date-time
+          example: 2024-06-01T12:00:00Z
+    ErrorResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: Bad Request
+        message:
+          type: string
+          example: Client error
+        status_code:
+          type: integer
+          example: 400
+    ValidationErrorResponse:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationError'
+    ValidationError:
+      type: object
+      properties:
+        field:
+          type: string
+          example: name
+        message:
+          type: string
+          example: Name is required
+    UnauthenticatedErrorResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: Unauthorized
+        message:
+          type: string
+          example: User not authenticated
+        status_code:
+          type: integer
+          example: 401
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
